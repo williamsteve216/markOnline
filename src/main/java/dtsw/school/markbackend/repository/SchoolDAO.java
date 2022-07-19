@@ -9,5 +9,4 @@ import java.util.Optional;
 
 public interface SchoolDAO extends JpaRepository<School,Long> {
     School save(School school);
-
 }
