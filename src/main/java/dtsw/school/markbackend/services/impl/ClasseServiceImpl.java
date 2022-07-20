@@ -2,9 +2,12 @@ package dtsw.school.markbackend.services.impl;
 
 import dtsw.school.markbackend.exceptions.ResourceNotFoundException;
 import dtsw.school.markbackend.models.Classe;
+import dtsw.school.markbackend.models.School;
 import dtsw.school.markbackend.payload.request.ClasseRequest;
 import dtsw.school.markbackend.repository.ClasseDAO;
+import dtsw.school.markbackend.repository.SchoolDAO;
 import dtsw.school.markbackend.services.ClasseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,13 +16,22 @@ import java.util.List;
 public class ClasseServiceImpl implements ClasseService {
     private ClasseDAO classeDAO;
 
+    @Autowired
+    private SchoolDAO schoolDAO;
+
     public ClasseServiceImpl(ClasseDAO classeDAO) {
         this.classeDAO = classeDAO;
     }
 
     @Override
     public Classe createClasse(ClasseRequest classeRequest) {
-        Classe classe = new Classe(classeRequest.getName());
+        School school = schoolDAO.findById(classeRequest.getSchoolId()).get();
+        Classe classe = new Classe(
+                classeRequest.getName(),
+                classeRequest.getAnneeScolaire(),
+                classeRequest.getNiveau(),
+                school
+        );
         classe = classeDAO.save(classe);
         return classe;
     }

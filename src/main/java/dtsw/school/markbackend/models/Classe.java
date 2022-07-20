@@ -11,6 +11,11 @@ public class Classe extends CommonModel {
     private long id;
     @Column(length = 50)
     private String name;
+    @Column(length = 10)
+
+    private String anneeScolaire;
+    @Column(length = 15)
+    private String niveau;
 
     @ManyToOne
     @JoinColumn(name = "school_id")
@@ -19,6 +24,13 @@ public class Classe extends CommonModel {
 
     public Classe(String name) {
         this.name = name;
+    }
+
+    public Classe(String name, String anneeScolaire, String niveau, School school) {
+        this.name = name;
+        this.anneeScolaire = anneeScolaire;
+        this.niveau = niveau;
+        this.school = school;
     }
 
     public long getId() {
@@ -43,5 +55,21 @@ public class Classe extends CommonModel {
 
     public void setSchool(School school) {
         this.school = school;
+    }
+
+    public String getAnneeScolaire() {
+        return anneeScolaire;
+    }
+
+    public void setAnneeScolaire(String anneeScolaire) {
+        this.anneeScolaire = anneeScolaire;
+    }
+
+    public String getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(String niveau) {
+        this.niveau = niveau;
     }
 }

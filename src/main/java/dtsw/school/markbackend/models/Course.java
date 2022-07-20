@@ -13,6 +13,10 @@ public class Course extends CommonModel{
     private String name;
     private int coefficient;
 
+    @ManyToOne
+    @JoinColumn(name = "conseil_id")
+    private Conseil conseil;
+
     public Course(String name, int coefficient) {
         this.name = name;
         this.coefficient = coefficient;
