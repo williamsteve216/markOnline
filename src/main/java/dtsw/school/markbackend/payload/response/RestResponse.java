@@ -1,6 +1,8 @@
 package dtsw.school.markbackend.payload.response;
 
-public class RestResponse {
+import java.io.Serializable;
+
+public class RestResponse implements Serializable {
     private Object data;
     private String message;
     private ResponseStatus status;
@@ -11,6 +13,7 @@ public class RestResponse {
 
     public RestResponse(Object data, String message, ResponseStatus status, int code) {
         this.data = data;
+        System.out.println("Je passe ici -1");
         this.message = message;
         this.status = status;
         this.code = code;

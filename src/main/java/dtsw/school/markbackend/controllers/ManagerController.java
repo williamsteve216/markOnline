@@ -1,9 +1,8 @@
 package dtsw.school.markbackend.controllers;
 
 import dtsw.school.markbackend.exceptions.ResourceNotFoundException;
-import dtsw.school.markbackend.models.Classe;
-import dtsw.school.markbackend.models.Student;
-import dtsw.school.markbackend.models.Teacher;
+import dtsw.school.markbackend.models.*;
+import dtsw.school.markbackend.payload.request.ClasseCourseTeacherRequest;
 import dtsw.school.markbackend.payload.request.ClasseRequest;
 import dtsw.school.markbackend.payload.request.StudentRequest;
 import dtsw.school.markbackend.payload.request.TeacherRequest;
@@ -34,6 +33,9 @@ public class ManagerController {
     @PostMapping("/classe")
     public RestResponse saveClasse(@RequestBody ClasseRequest classeRequest){
         Classe classe = classeService.createClasse(classeRequest);
+        System.out.print(classe);
+        School school = new School();
+        //Classe classe1 = new Classe("Test","2005-2015","BACC",school);
         return new RestResponse(classe,"Classe Created successfully", ResponseStatus.SUCCESS,201);
     }
     //Build Update Classe REST API
@@ -73,6 +75,26 @@ public class ManagerController {
         return new RestResponse(classeList,"Classes list successfully",ResponseStatus.SUCCESS,200);
     }
 
+    //Build add classe course teacher Rest API
+    @PostMapping("/classe/addCourseTeacher")
+    public RestResponse createClasseCourseTeacher(@RequestBody ClasseCourseTeacherRequest classeCourseTeacherRequest) throws ResourceNotFoundException{
+        try {
+            List<ClasseCourseTeacher> classeCourseTeachers = classeService.createClasseCourseTeacher(classeCourseTeacherRequest);
+            return new RestResponse(classeCourseTeachers,"Course and teacher added successfully to classe",ResponseStatus.SUCCESS,201);
+        }catch (ResourceNotFoundException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.FAILED,404);
+        }
+    }
+    //Build add Teacher to classe
+    @PostMapping("/classe/addTeacher")
+    public RestResponse addTeacherToClasse(@RequestBody ClasseCourseTeacherRequest classeCourseTeacherRequest){
+        try{
+            List<ClasseCourseTeacher> classeCourseTeachers = classeService.addTeacherToClasse(classeCourseTeacherRequest);
+            return new RestResponse(classeCourseTeachers,"Teacher added to the classe successfully",ResponseStatus.SUCCESS,200);
+        }catch (ResourceNotFoundException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.FAILED,404);
+        }
+    }
     /*=========================================================================*/
     /*                             STUDENT API                                 */
     /*=========================================================================*/

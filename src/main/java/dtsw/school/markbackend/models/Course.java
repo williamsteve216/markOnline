@@ -1,6 +1,9 @@
 package dtsw.school.markbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @SequenceGenerator(name = Course.COURSE_SEQUENCE_NAME, sequenceName =Course.COURSE_SEQUENCE_NAME )
@@ -16,6 +19,13 @@ public class Course extends CommonModel{
     @ManyToOne
     @JoinColumn(name = "conseil_id")
     private Conseil conseil;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<ClasseCourseTeacher> classeCourseTeachers;
+
+    public Course() {
+    }
 
     public Course(String name, int coefficient) {
         this.name = name;

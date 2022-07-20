@@ -1,16 +1,17 @@
 package dtsw.school.markbackend.payload.request;
 
-import com.sun.istack.NotNull;
+
+import javax.validation.constraints.NotBlank;
 
 public class StudentRequest {
     private long id;
-    @NotNull
+    @NotBlank
     private String firstName;
     private String lastName;
-    @NotNull
+    @NotBlank
     private char sexe;
     private String placeOfBirth;
-    @NotNull
+    @NotBlank
     private String dateOfBirth;
     private String email;
     private String phone;

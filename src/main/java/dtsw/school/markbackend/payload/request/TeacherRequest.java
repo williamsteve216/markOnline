@@ -1,14 +1,15 @@
 package dtsw.school.markbackend.payload.request;
 
-
-import com.sun.istack.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class TeacherRequest {
     private Long id;
-    @NotNull
+    @NotBlank
     private String firstName;
     private String lastName;
     private String grade;
+    private String matricule;
+    private Long schoolId;
 
     public Long getId() {
         return id;
@@ -40,5 +41,21 @@ public class TeacherRequest {
 
     public void setGrade(String grade) {
         this.grade = grade;
+    }
+
+    public String getMatricule() {
+        return matricule;
+    }
+
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
+    }
+
+    public Long getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(Long schoolId) {
+        this.schoolId = schoolId;
     }
 }

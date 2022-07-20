@@ -1,7 +1,10 @@
 package dtsw.school.markbackend.payload.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class SchoolRequest {
     private long id;
+    @NotBlank
     private String name;
     private String email;
     private String division;

@@ -1,11 +1,14 @@
 package dtsw.school.markbackend.services.impl;
 
+import dtsw.school.markbackend.exceptions.ClasseCourseException;
 import dtsw.school.markbackend.exceptions.ResourceNotFoundException;
-import dtsw.school.markbackend.models.Classe;
-import dtsw.school.markbackend.models.School;
+import dtsw.school.markbackend.models.*;
+import dtsw.school.markbackend.payload.request.ClasseCourseTeacherRequest;
 import dtsw.school.markbackend.payload.request.ClasseRequest;
 import dtsw.school.markbackend.repository.ClasseDAO;
+import dtsw.school.markbackend.repository.CourseDAO;
 import dtsw.school.markbackend.repository.SchoolDAO;
+import dtsw.school.markbackend.repository.TeacherDAO;
 import dtsw.school.markbackend.services.ClasseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,10 @@ public class ClasseServiceImpl implements ClasseService {
 
     @Autowired
     private SchoolDAO schoolDAO;
+    @Autowired
+    private CourseDAO courseDAO;
+    @Autowired
+    private TeacherDAO teacherDAO;
 
     public ClasseServiceImpl(ClasseDAO classeDAO) {
         this.classeDAO = classeDAO;
@@ -64,4 +71,51 @@ public class ClasseServiceImpl implements ClasseService {
         List<Classe> classeList = classeDAO.findAll();
         return classeList;
     }
+
+    @Override
+    public List<ClasseCourseTeacher> createClasseCourseTeacher(ClasseCourseTeacherRequest classeCourseTeacherRequest) {
+        Classe classe = classeDAO.findById(classeCourseTeacherRequest.getClasseId()).orElseThrow(()->
+                new ResourceNotFoundException("Classe","Id",classeCourseTeacherRequest.getClasseId()));
+        Course course = courseDAO.findById(classeCourseTeacherRequest.getCourseId()).orElseThrow(()->
+                new ResourceNotFoundException("Course","Id",classeCourseTeacherRequest.getCourseId()));
+        Teacher teacher = null;
+        if(classeCourseTeacherRequest.getTeacherId()!=0){
+            teacher = teacherDAO.findById(classeCourseTeacherRequest.getTeacherId()).orElseThrow(()->
+                    new ResourceNotFoundException("Teacher","Id",classeCourseTeacherRequest.getTeacherId()));
+        }
+        if(classe.existCourse(course)==false){
+            if(teacher!=null){
+                ClasseCourseTeacher classeCourseTeacher = new ClasseCourseTeacher(classe,course,teacher,course.getCoefficient());
+                List<ClasseCourseTeacher>classeCourseTeachers = classe.addClasseCourseTeacher(classeCourseTeacher);
+                classe.setClasseCourseTeachers(classeCourseTeachers);
+                classe = classeDAO.save(classe);
+                return classe.getClasseCourseTeachers();
+            }
+            else{
+                ClasseCourseTeacher classeCourseTeacher = new ClasseCourseTeacher(classe,course,course.getCoefficient());
+                List<ClasseCourseTeacher>classeCourseTeachers = classe.addClasseCourseTeacher(classeCourseTeacher);
+                classe.setClasseCourseTeachers(classeCourseTeachers);
+                classe = classeDAO.save(classe);
+                return classe.getClasseCourseTeachers();
+            }
+        }
+        else{
+            throw  new ClasseCourseException();
+        }
+    }
+
+    @Override
+    public List<ClasseCourseTeacher> addTeacherToClasse(ClasseCourseTeacherRequest classeCourseTeacherRequest) {
+        Classe classe = classeDAO.findById(classeCourseTeacherRequest.getClasseId()).orElseThrow(()->
+                new ResourceNotFoundException("Classe","Id",classeCourseTeacherRequest.getClasseId()));
+        Course course = courseDAO.findById(classeCourseTeacherRequest.getCourseId()).orElseThrow(()->
+                new ResourceNotFoundException("Course","Id",classeCourseTeacherRequest.getCourseId()));
+        Teacher teacher = teacherDAO.findById(classeCourseTeacherRequest.getTeacherId()).orElseThrow(()->
+                new ResourceNotFoundException("Teacher","Id",classeCourseTeacherRequest.getTeacherId()));
+        List<ClasseCourseTeacher> classeCourseTeachers = classe.addTeacher(teacher,course);
+        classe.setClasseCourseTeachers(classeCourseTeachers);
+        classe = classeDAO.save(classe);
+        return classe.getClasseCourseTeachers();
+    }
+
 }

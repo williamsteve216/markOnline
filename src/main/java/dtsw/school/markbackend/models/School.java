@@ -19,7 +19,10 @@ public class School extends CommonModel{
     private String subdivision;
 
     @OneToMany(mappedBy = "school")
-    private List<Classe> classeList;
+    private List<Classe> classes;
+
+    @OneToMany(mappedBy = "school")
+    private List<Teacher> teachers;
 
     public School() {
     }
@@ -71,11 +74,19 @@ public class School extends CommonModel{
         this.subdivision = subdivision;
     }
 
-    public List<Classe> getClasseList() {
-        return classeList;
+    public List<Classe> getClasses() {
+        return classes;
     }
 
-    public void setClasseList(List<Classe> classeList) {
-        this.classeList = classeList;
+    public void setClasses(List<Classe> classes) {
+        this.classes = classes;
+    }
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
     }
 }

@@ -1,9 +1,11 @@
 package dtsw.school.markbackend.payload.request;
 
-import dtsw.school.markbackend.models.School;
+
+import javax.validation.constraints.NotBlank;
 
 public class ClasseRequest {
     private Long id;
+    @NotBlank
     private String name;
     private String niveau;
     private String anneeScolaire;
