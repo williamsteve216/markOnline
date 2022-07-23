@@ -10,6 +10,7 @@ public class ClasseRequest {
     private String niveau;
     private String anneeScolaire;
     private long schoolId;
+    private String statut;
 
     public Long getId() {
         return id;
@@ -49,5 +50,13 @@ public class ClasseRequest {
 
     public void setSchoolId(long schoolId) {
         this.schoolId = schoolId;
+    }
+
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
     }
 }

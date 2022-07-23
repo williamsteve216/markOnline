@@ -2,8 +2,10 @@ package dtsw.school.markbackend.services;
 
 import dtsw.school.markbackend.models.Classe;
 import dtsw.school.markbackend.models.ClasseCourseTeacher;
+import dtsw.school.markbackend.models.ClasseStudent;
 import dtsw.school.markbackend.payload.request.ClasseCourseTeacherRequest;
 import dtsw.school.markbackend.payload.request.ClasseRequest;
+import dtsw.school.markbackend.payload.request.ClasseStudentRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,4 +20,9 @@ public interface ClasseService {
 
     List<ClasseCourseTeacher>createClasseCourseTeacher(ClasseCourseTeacherRequest classeCourseTeacherRequest);
     List<ClasseCourseTeacher>addTeacherToClasse(ClasseCourseTeacherRequest classeCourseTeacherRequest);
+    List<ClasseCourseTeacher>removeTeacherToClasse(ClasseCourseTeacherRequest classeCourseTeacherRequest);
+
+    List<ClasseStudent> enrollStudentToClasse(ClasseStudentRequest classeStudentRequest);
+    List<ClasseStudent> removeStudentToClasse(ClasseStudentRequest classeStudentRequest);
+
 }

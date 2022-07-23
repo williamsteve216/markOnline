@@ -1,11 +1,9 @@
 package dtsw.school.markbackend.controllers;
 
+import dtsw.school.markbackend.exceptions.ExistException;
 import dtsw.school.markbackend.exceptions.ResourceNotFoundException;
 import dtsw.school.markbackend.models.*;
-import dtsw.school.markbackend.payload.request.ClasseCourseTeacherRequest;
-import dtsw.school.markbackend.payload.request.ClasseRequest;
-import dtsw.school.markbackend.payload.request.StudentRequest;
-import dtsw.school.markbackend.payload.request.TeacherRequest;
+import dtsw.school.markbackend.payload.request.*;
 import dtsw.school.markbackend.payload.response.ResponseStatus;
 import dtsw.school.markbackend.payload.response.RestResponse;
 import dtsw.school.markbackend.services.ClasseService;
@@ -95,6 +93,40 @@ public class ManagerController {
             return new RestResponse(e.getMessage(),ResponseStatus.FAILED,404);
         }
     }
+    //Build remove Teacher to classe
+    @PostMapping("/classe/removeTeacher")
+    public RestResponse removeTeacherToClasse(@RequestBody ClasseCourseTeacherRequest classeCourseTeacherRequest){
+        try{
+            List<ClasseCourseTeacher> classeCourseTeachers = classeService.removeTeacherToClasse(classeCourseTeacherRequest);
+            return new RestResponse(classeCourseTeachers,"The teacher has remove successfully",ResponseStatus.SUCCESS,200);
+        }catch (ResourceNotFoundException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.FAILED,404);
+        }
+    }
+    //Build add Student to classe
+    @PostMapping("/classe/addStudent")
+    public RestResponse addStudentToClasse(@RequestBody ClasseStudentRequest classeStudentRequest){
+        try{
+            List<ClasseStudent> classeStudents = classeService.enrollStudentToClasse(classeStudentRequest);
+            return new RestResponse(classeStudents,"The student enroll successfully to classe",ResponseStatus.SUCCESS,200);
+        }catch (ResourceNotFoundException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.FAILED,404);
+        }
+        catch (ExistException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.ABORTED,400);
+        }
+    }
+    //Build remove student to classe
+    @PostMapping("/classe/removeStudent")
+    public RestResponse removeStudentToClasse(ClasseStudentRequest classeStudentRequest){
+        try{
+            List<ClasseStudent> classeStudents = classeService.removeStudentToClasse(classeStudentRequest);
+            return new RestResponse(classeStudents,"The student remove to classe successfully",ResponseStatus.SUCCESS,200);
+        }catch (ResourceNotFoundException e){
+            return new RestResponse(e.getMessage(),ResponseStatus.ABORTED,400);
+        }
+    }
+
     /*=========================================================================*/
     /*                             STUDENT API                                 */
     /*=========================================================================*/

@@ -1,14 +1,13 @@
 package dtsw.school.markbackend.services.impl;
 
 import dtsw.school.markbackend.exceptions.ClasseCourseException;
+import dtsw.school.markbackend.exceptions.ExistException;
 import dtsw.school.markbackend.exceptions.ResourceNotFoundException;
 import dtsw.school.markbackend.models.*;
 import dtsw.school.markbackend.payload.request.ClasseCourseTeacherRequest;
 import dtsw.school.markbackend.payload.request.ClasseRequest;
-import dtsw.school.markbackend.repository.ClasseDAO;
-import dtsw.school.markbackend.repository.CourseDAO;
-import dtsw.school.markbackend.repository.SchoolDAO;
-import dtsw.school.markbackend.repository.TeacherDAO;
+import dtsw.school.markbackend.payload.request.ClasseStudentRequest;
+import dtsw.school.markbackend.repository.*;
 import dtsw.school.markbackend.services.ClasseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,8 @@ public class ClasseServiceImpl implements ClasseService {
     private CourseDAO courseDAO;
     @Autowired
     private TeacherDAO teacherDAO;
+    @Autowired
+    private StudentDAO studentDAO;
 
     public ClasseServiceImpl(ClasseDAO classeDAO) {
         this.classeDAO = classeDAO;
@@ -116,6 +117,61 @@ public class ClasseServiceImpl implements ClasseService {
         classe.setClasseCourseTeachers(classeCourseTeachers);
         classe = classeDAO.save(classe);
         return classe.getClasseCourseTeachers();
+    }
+
+    @Override
+    public List<ClasseCourseTeacher> removeTeacherToClasse(ClasseCourseTeacherRequest classeCourseTeacherRequest) {
+        Classe classe = classeDAO.findById(classeCourseTeacherRequest.getClasseId()).orElseThrow(()->
+                new ResourceNotFoundException("Classe","Id",classeCourseTeacherRequest.getClasseId()));
+        Course course = courseDAO.findById(classeCourseTeacherRequest.getCourseId()).orElseThrow(()->
+                new ResourceNotFoundException("Course","Id",classeCourseTeacherRequest.getCourseId()));
+        Teacher teacher = teacherDAO.findById(classeCourseTeacherRequest.getTeacherId()).orElseThrow(()->
+                new ResourceNotFoundException("Teacher","Id",classeCourseTeacherRequest.getTeacherId()));
+        ClasseCourseTeacher classeCourseTeacher = new ClasseCourseTeacher(classe,course,teacher, course.getCoefficient());
+        if(classe.existTeacherCourse(teacher,course)){
+            List<ClasseCourseTeacher> classeCourseTeachers = classe.removeTeacher(classeCourseTeacher);
+            classe.setClasseCourseTeachers(classeCourseTeachers);
+            classe = classeDAO.save(classe);
+            return classe.getClasseCourseTeachers();
+        }
+        else{
+            throw new ResourceNotFoundException("Teacher course","Classe");
+        }
+    }
+
+    @Override
+    public List<ClasseStudent> enrollStudentToClasse(ClasseStudentRequest classeStudentRequest) {
+        Classe classe = classeDAO.findById(classeStudentRequest.getClasseId()).orElseThrow(()->
+                new ResourceNotFoundException("Classe","Id",classeStudentRequest.getClasseId()));
+        Student student = studentDAO.findById(classeStudentRequest.getStudentId()).orElseThrow(()->
+                new ResourceNotFoundException("Student","Id",classeStudentRequest.getStudentId()));
+        ClasseStudent classeStudent = new ClasseStudent(student,classe,classeStudentRequest.getAnneeScolaire(),classeStudentRequest.getStatut());
+        if(!classe.existStudent(student)){
+            List<ClasseStudent> classeStudents = classe.enrollStudent(classeStudent);
+            classe.setClasseStudents(classeStudents);
+            classe = classeDAO.save(classe);
+            return classe.getClasseStudents();
+        }else{
+            throw new ExistException("Student","Classe");
+        }
+    }
+
+    @Override
+    public List<ClasseStudent> removeStudentToClasse(ClasseStudentRequest classeStudentRequest) {
+        Classe classe = classeDAO.findById(classeStudentRequest.getClasseId()).orElseThrow(()->
+                new ResourceNotFoundException("Classe","Id",classeStudentRequest.getClasseId()));
+        Student student = studentDAO.findById(classeStudentRequest.getStudentId()).orElseThrow(()->
+                new ResourceNotFoundException("Student","Id",classeStudentRequest.getStudentId()));
+        if(classe.existStudent(student)){
+            ClasseStudent classeStudent = new ClasseStudent(student,classe);
+            List<ClasseStudent> classeStudents = classe.removeStudent(classeStudent);
+            classe.setClasseStudents(classeStudents);
+            classe = classeDAO.save(classe);
+            return classe.getClasseStudents();
+        }
+        else{
+            throw new ResourceNotFoundException("Student","Classe");
+        }
     }
 
 }

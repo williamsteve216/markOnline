@@ -4,6 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @SequenceGenerator(name = Student.STUDENT_SEQUENCE_NAME, sequenceName = Student.STUDENT_SEQUENCE_NAME)
@@ -38,6 +39,9 @@ public class Student extends CommonModel{
     @Enumerated(EnumType.STRING)
     @Column(length = 30, columnDefinition = "varchar(30) default 'ROLE_STUDENT'")
     private ERole role;
+
+    @OneToMany(mappedBy = "student")
+    private List<ClasseStudent> classeStudents;
 
     public Student(String firstName, String lastName, char sexe, String placeOfBirth, Date dateOfBirth) {
         this.firstName = firstName;
@@ -179,5 +183,13 @@ public class Student extends CommonModel{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<ClasseStudent> getClasseStudents() {
+        return classeStudents;
+    }
+
+    public void setClasseStudents(List<ClasseStudent> classeStudents) {
+        this.classeStudents = classeStudents;
     }
 }

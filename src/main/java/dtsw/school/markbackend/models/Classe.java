@@ -17,7 +17,6 @@ public class Classe extends CommonModel {
     @Column(length = 50)
     private String name;
     @Column(length = 10)
-
     private String anneeScolaire;
     @Column(length = 15)
     private String niveau;
@@ -30,6 +29,8 @@ public class Classe extends CommonModel {
     @JsonIgnore
     @OneToMany(mappedBy = "classe", cascade = CascadeType.ALL)
     private List<ClasseCourseTeacher> classeCourseTeachers;
+
+    private List<ClasseStudent> classeStudents;
 
     public Classe() {
     }
@@ -93,6 +94,14 @@ public class Classe extends CommonModel {
         this.classeCourseTeachers = classeCourseTeachers;
     }
 
+    public List<ClasseStudent> getClasseStudents() {
+        return classeStudents;
+    }
+
+    public void setClasseStudents(List<ClasseStudent> classeStudents) {
+        this.classeStudents = classeStudents;
+    }
+
     public List<ClasseCourseTeacher> addClasseCourseTeacher(ClasseCourseTeacher classeCourseTeacher){
         this.classeCourseTeachers.add(classeCourseTeacher);
         return this.getClasseCourseTeachers();
@@ -116,12 +125,60 @@ public class Classe extends CommonModel {
         }
         return classeCourseTeachers;
     }
+    public List<ClasseCourseTeacher> removeTeacher(ClasseCourseTeacher classeCourseTeacher){
+        List<ClasseCourseTeacher> classeCourseTeachers = this.getClasseCourseTeachers();
+        ListIterator<ClasseCourseTeacher> listIterator = classeCourseTeachers.listIterator();
+        boolean found=false;
+        while(listIterator.hasNext() && found==false){
+            ClasseCourseTeacher classeCourseTeacher1 = listIterator.next();
+            if(classeCourseTeacher.getTeacher().equals(classeCourseTeacher1.getTeacher()) &&
+                    classeCourseTeacher.getCourse().equals(classeCourseTeacher1.getCourse())){
+                found=true;
+                classeCourseTeacher.setTeacher(null);
+                listIterator.set(classeCourseTeacher);
+            }
+        }
+        return classeCourseTeachers;
+    }
+    public boolean existTeacherCourse(Teacher teacher, Course course){
+        boolean found = false;
+        Iterator<ClasseCourseTeacher> classeCourseTeacherIterator = this.getClasseCourseTeachers().iterator();
+        while (classeCourseTeacherIterator.hasNext() && found==false){
+            ClasseCourseTeacher classeCourseTeacher = classeCourseTeacherIterator.next();
+            if(teacher.equals(classeCourseTeacher.getTeacher()) && course.equals(classeCourseTeacher.getCourse())){
+                found=true;
+            }
+        }
+        return found;
+    }
     public boolean existCourse(Course course){
         boolean found = false;
         Iterator<ClasseCourseTeacher> classeCourseTeacherIterator = this.getClasseCourseTeachers().iterator();
         while (classeCourseTeacherIterator.hasNext() && found==false){
             ClasseCourseTeacher classeCourseTeacher = classeCourseTeacherIterator.next();
             if(course.equals(classeCourseTeacher.getCourse())){
+                found=true;
+            }
+        }
+        return found;
+    }
+    public List<ClasseStudent> enrollStudent(ClasseStudent classeStudent){
+        List<ClasseStudent> classeStudents = this.getClasseStudents();
+        classeStudents.add(classeStudent);
+        return classeStudents;
+    }
+    public List<ClasseStudent> removeStudent(ClasseStudent classeStudent){
+        List<ClasseStudent> classeStudents = this.getClasseStudents();
+        classeStudents.removeIf(element->classeStudent.getStudent().equals(element.getStudent()));
+        return classeStudents;
+    }
+    public boolean existStudent(Student student){
+        boolean found=false;
+        List<ClasseStudent> classeStudents = this.getClasseStudents();
+        Iterator<ClasseStudent> classeStudentIterator = classeStudents.iterator();
+        while (classeStudentIterator.hasNext() && found==false){
+            ClasseStudent classeStudent = classeStudentIterator.next();
+            if(classeStudent.getStudent().equals(student)){
                 found=true;
             }
         }
